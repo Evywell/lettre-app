@@ -1,0 +1,232 @@
+/*
+   statusbar-overlay sets the background color for the overlay. Black text is the default when the statusbar plugin is not added. When the
+   statusbar plugin is added, it also adds default setting to make the content white via:
+
+       <preference name="StatusBarStyle" value="lightcontent"/>
+
+   Setting the background color to black will allow the default light content (white text/icons) to show on it. The statusbar plugin is included
+   in the config.xml file and will be added by the CLI when you build locally.
+
+   See https://github.com/apache/cordova-plugin-statusbar
+*/
+
+.statusbar-overlay {
+    background: #000000;
+}
+
+.application {
+    background: #FFF;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.img-top {
+    height: 200px;
+}
+
+.bandeau {
+    background: #4087c5;
+    border-bottom: 2px solid #455c70;
+    height: 40px;
+}
+
+.bandeau-content {
+    height: 100%;
+    line-height: 40px;
+    color: #FFF;
+    font-family: 'Helvetica';
+    font-size: 1em;
+}
+
+.bandeau-content__left {
+    padding-left: 25px;
+    letter-spacing: 1px;
+}
+
+.bandeau-content__left, .bandeau-content__right {
+    display: inline-block;
+}
+
+.bandeau-content__right {
+
+}
+
+.btn-lang, .btn-calendar {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: #FFF;
+    vertical-align: middle;
+    margin: 0 3px;
+}
+
+.lettre-head {
+    padding: 20px;
+    border-bottom: 1px solid #e1ecf6;
+}
+
+.lettre-head .lettre-titre {
+    text-transform: uppercase;
+    color: #4087c5;
+    font-size: 1.7em;
+}
+
+.lettre-head .lettre-soustitre {
+    font-size: 0.9em;
+    color: #8e96a4;
+}
+
+.sommaire {
+    padding: 10px 15px;
+    text-align: center;
+    border-bottom: 1px solid #e1ecf6;
+    margin-bottom: 20px;
+}
+
+.sommaire .btn-sommaire {
+    position: relative;
+    border: none;
+    background: #e1e2e3;
+    color: #5e5e5e;
+    padding: 10px 20px;
+}
+
+.sommaire .btn-sommaire::before, .sommaire .btn-sommaire::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+}
+
+.sommaire .btn-sommaire::after {
+    bottom: 5px;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    border-color: #5e5e5e transparent transparent transparent;
+}
+
+.sommaire .btn-sommaire::before {
+    display: none;
+    top: 5px;
+    border-style: solid;
+    border-width: 0 5px 5px 5px;
+    border-color: transparent transparent #5e5e5e transparent;
+}
+
+.sommaire .sommaire-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.sommaire.open .sommaire-content {
+    display: block;
+    text-align: justify;
+}
+
+.sommaire .sommaire-content .titre {
+    font-weight: 600;
+    color: #699fd0;
+}
+
+.sommaire .sommaire-content span {
+    margin-right: 5px;
+}
+
+.sommaire.open .btn-sommaire::before {
+    display: block;
+}
+
+.sommaire.open .btn-sommaire::after {
+    display: none;
+}
+
+.articles .article {
+    display: block;
+    color: #000;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e1ecf6;
+}
+
+.articles .article:last-child {
+    border: none;
+}
+
+.articles .article .article-titre {
+    font-weight: 600;
+}
+
+.articles .article .article-contenu {
+    text-align: justify;
+    margin-top: 10px;
+}
+
+.articles .article .article-contenu.hidden {
+    display: none;
+}
+
+.articles .article .article-contenu .article-btns {
+    margin-top: 15px;
+}
+
+.articles .article .article-contenu .article-btns .article-btn {
+    display: block;
+    width: 100%;
+    text-transform: uppercase;
+    background: #4087c5;
+    color: #FFF;
+    text-align: center;
+    padding: 15px 0;
+    border: none;
+    margin: 10px 0;
+}
+
+.agenda .agenda-dates {
+}
+
+.agenda .agenda-dates .agenda-date {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e1ecf6;
+}
+
+.agenda .agenda-dates .agenda-date:last-child {
+    border: none;
+}
+
+.agenda .agenda-dates .agenda-date .agenda-date__date, .agenda .agenda-dates .agenda-date .agenda-date__lieu {
+    margin-bottom: 2px;
+}
+
+.agenda .agenda-dates .agenda-date .agenda-date__date {
+    font-weight: 600;
+}
+
+.agenda .agenda-dates .agenda-date .agenda-date__lieu {
+    color: #4087c5;
+    font-weight: 600;
+}
+
+.agenda .agenda-dates .agenda-date .agenda-date__content {
+    color: #4087c5;
+}
+
+.bottom {
+    background: #4087c5;
+    color: #8ebde7;
+}
+
+.bottom .infos {
+    font-size: 1.1em;
+    padding: 5px 15px 20px 15px;
+}
+
+.bottom .infos .info-titre {
+    font-weight: 600;
+    padding: 20px 0 10px 0;
+}
+
+.bottom .histoire {
+    border-top: 2px solid #8ebde7;
+    padding: 30px 15px 15px 15px;
+}
