@@ -10,15 +10,17 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
 
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src *; style-src 'self' http://* 'unsafe-inline'; img-src 'self' data: https:; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'" />
     <!-- Required meta tags-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="telephone=yes">
     <meta name="msapplication-tap-highlight" content="no">
+
 
     <!-- Your app title -->
     <title>My App</title>
@@ -26,7 +28,7 @@
     <!-- This template defaults to the iOS CSS theme. To support both iOS and material design themes, see the Framework7 Tutorial at the link below:
         http://www.idangero.us/framework7/tutorials/maintain-both-ios-and-material-themes-in-single-app.html
      -->
-
+    <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
     <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
     <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
 
@@ -65,8 +67,11 @@
                             <div class="bandeau">
                                 <div class="bandeau-content row">
                                     <div class="bandeau-content__left col-70">Cette semaine</div>
-                                    <div class="bandeau-content__right col-30"><a class="btn-lang"></a><a
-                                            class="btn-calendar"></a></div>
+                                    <div class="bandeau-content__right col-30">
+                                        <a class="btn-lang open-popover open-lang" data-popover=".lang-popover"></a>
+                                        <a class="btn-calendar open-popover open-calendar"
+                                           data-popover=".calendar-popover"></a>
+                                    </div>
                                 </div>
                             </div>
                             <div class="lettre-head">
@@ -76,8 +81,6 @@
                             <div class="sommaire">
                                 <button class="btn-sommaire">Sommaire</button>
                                 <div class="sommaire-content">
-                                    <span class="titre">France :</span><span>Etat/UE - Europe/France</span>
-                                    <span class="titre">Commission :</span><span>Trafic/Art - Hongrie - Jeunesse</span>
                                 </div>
                             </div>
                             <div>
@@ -88,13 +91,14 @@
                                 </div>
                             </div>
                             <div class="articles">
+                                <!--
                                 <a class="article" data-id="1">
                                     <div class="article-titre">Lisez le Rapport Schuman sur l'Europe, l'état de l'Union 2017</div>
                                     <div class="article-contenu hidden">Le 17 et 18 juillet, les 28 ministres ont
                                         rendu leur conclusion sur la Libye, la crise migrtoire, la Corée du Nord,
                                         la stratégie globale
                                         <div class="article-btns">
-                                            <button class="article-btn">lire la suite</button>
+                                            <button class="article-btn" data-href="">lire la suite</button>
                                             <button class="article-btn">autre lien</button>
                                         </div>
                                     </div>
@@ -111,112 +115,23 @@
                                         </div>
                                     </div>
                                 </a>
-                            </div><div>
-                            <div class="row">
-                                <div class="col-100">
-                                    <img src="img/head.jpg" alt="" width="100%">
-                                </div>
+                                -->
                             </div>
-                        </div>
-                        <div class="articles">
-                            <a class="article" data-id="1">
-                                <div class="article-titre">Lisez le Rapport Schuman sur l'Europe, l'état de l'Union 2017</div>
-                                <div class="article-contenu hidden">Le 17 et 18 juillet, les 28 ministres ont
-                                    rendu leur conclusion sur la Libye, la crise migrtoire, la Corée du Nord,
-                                    la stratégie globale
-                                    <div class="article-btns">
-                                        <button class="article-btn">lire la suite</button>
-                                        <button class="article-btn">autre lien</button>
+                            <div class="bottom">
+                                <div class="infos">
+                                    <div class="info">
+                                        <div class="info-titre">Les rédacteurs de la Lettre</div>
+                                        <div class="info-content">Charles de skdjlqsdjlkq, sdlkfjskdf,
+                                            qsdlkjsqlkdqsdqd</div>
+                                    </div>
+                                    <div class="info">
+                                        <div class="info-titre">Rédacteur en chef</div>
+                                        <div class="info-content">Charles de Marcilly</div>
                                     </div>
                                 </div>
-                            </a>
-                            <a class="article" data-id="2">
-                                <div class="article-titre">"Pour quelques étoiles de plus... Quelle politique
-                                    européenne pour la France ?"</div>
-                                <div class="article-contenu hidden">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. A ab ad autem consectetur culpa cumque, deleniti facilis
-                                    fugit iure laudantium nam necessitatibus odit, quas quasi, repellendus tempore ut? Modi, voluptatem!
-                                    <div class="article-btns">
-                                        <button class="article-btn">lire la suite</button>
-                                        <button class="article-btn">autre lien</button>
-                                    </div>
+                                <div class="histoire">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad aliquid, deserunt ducimus eos incidunt magnam maiores recusandae rerum. A adipisci aut cupiditate dolores ducimus illum ipsam suscipit tempore tenetur velit.
                                 </div>
-                            </a>
-                            <a class="article" data-id="2">
-                                <div class="article-titre">"Pour quelques étoiles de plus... Quelle politique
-                                    européenne pour la France ?"</div>
-                                <div class="article-contenu hidden">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. A ab ad autem consectetur culpa cumque, deleniti facilis
-                                    fugit iure laudantium nam necessitatibus odit, quas quasi, repellendus tempore ut? Modi, voluptatem!
-                                    <div class="article-btns">
-                                        <button class="article-btn">lire la suite</button>
-                                        <button class="article-btn">autre lien</button>
-                                    </div>
-                                </div>
-                            </a>
-                            <a class="article" data-id="2">
-                                <div class="article-titre">"Pour quelques étoiles de plus... Quelle politique
-                                    européenne pour la France ?"</div>
-                                <div class="article-contenu hidden">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. A ab ad autem consectetur culpa cumque, deleniti facilis
-                                    fugit iure laudantium nam necessitatibus odit, quas quasi, repellendus tempore ut? Modi, voluptatem!
-                                    <div class="article-btns">
-                                        <button class="article-btn">lire la suite</button>
-                                        <button class="article-btn">autre lien</button>
-                                    </div>
-                                </div>
-                            </a>
-                            <a class="article" data-id="2">
-                                <div class="article-titre">"Pour quelques étoiles de plus... Quelle politique
-                                    européenne pour la France ?"</div>
-                                <div class="article-contenu hidden">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. A ab ad autem consectetur culpa cumque, deleniti facilis
-                                    fugit iure laudantium nam necessitatibus odit, quas quasi, repellendus tempore ut? Modi, voluptatem!
-                                    <div class="article-btns">
-                                        <button class="article-btn">lire la suite</button>
-                                        <button class="article-btn">autre lien</button>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="agenda">
-                                <div class="agenda-head">
-                                    <img src="img/agenda.jpg" alt="" width="100%">
-                                </div>
-                                <div class="agenda-dates">
-                                    <div class="agenda-date">
-                                        <div class="agenda-date__date">17 juillet</div>
-                                        <div class="agenda-date__lieu">Bruxelles</div>
-                                        <div class="agenda-date__content">Conseil Affaires étrangères</div>
-                                    </div>
-                                    <div class="agenda-date">
-                                        <div class="agenda-date__date">17 juillet</div>
-                                        <div class="agenda-date__lieu">Bruxelles</div>
-                                        <div class="agenda-date__content">Conseil Affaires étrangères</div>
-                                    </div>
-                                    <div class="agenda-date">
-                                        <div class="agenda-date__date">17 juillet</div>
-                                        <div class="agenda-date__lieu">Bruxelles</div>
-                                        <div class="agenda-date__content">Conseil Affaires étrangères</div>
-                                        <div class="agenda-date__lieu">Bruxelles</div>
-                                        <div class="agenda-date__content">Conseil Affaires étrangères</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bottom">
-                            <div class="infos">
-                                <div class="info">
-                                    <div class="info-titre">Les rédacteurs de la Lettre</div>
-                                    <div class="info-content">Charles de skdjlqsdjlkq, sdlkfjskdf,
-                                        qsdlkjsqlkdqsdqd</div>
-                                </div>
-                                <div class="info">
-                                    <div class="info-titre">Rédacteur en chef</div>
-                                    <div class="info-content">Charles de Marcilly</div>
-                                </div>
-                            </div>
-                            <div class="histoire">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad aliquid, deserunt ducimus eos incidunt magnam maiores recusandae rerum. A adipisci aut cupiditate dolores ducimus illum ipsam suscipit tempore tenetur velit.
                             </div>
                         </div>
                     </div>
@@ -225,6 +140,69 @@
         </div>
     </div>
 
+    <div class="popover lang-popover">
+        <div class="popover-angle"></div>
+        <div class="popover-inner">
+            <div class="popover-content">
+                <div class="popover-content-lang__head">Choix de la version</div>
+                <div class="popover-content-lang__content">
+                    <button class="btn-lang-popover disabled"><img src="img/flag-fr.png" alt="">Version Française</button>
+                    <button class="btn-lang-popover"><img src="img/flag-en.png" alt="">Version Anglaise</button>
+                    <button class="btn-lang-popover"><img src="img/flag-de.png" alt="">Version Allemande</button>
+                    <button class="btn-lang-popover"><img src="img/flag-es.png" alt="">Version Espagnole</button>
+                    <button class="btn-lang-popover"><img src="img/flag-pl.png" alt="">Version Polonaise</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popover calendar-popover">
+        <div class="popover-angle"></div>
+        <div class="popover-inner">
+            <div class="popover-content">
+                <div class="popover-content-calendar__head">Choix de la lettre</div>
+                <div class="popover-content-calendar__content">
+                    <div class="switch-date">
+                        <div class="row no-gutter">
+                            <div class="col-30"><a href="">&lt;</a></div>
+                            <div class="col-40">Juillet 2017</div>
+                            <div class="col-30"><a href="">&gt;</a></div>
+                        </div>
+                    </div>
+                    <div class="lettres">
+                        <div class="row">
+                            <div class="col-50">
+                                <div class="lettre disabled">
+                                    <div class="lettre-content">
+                                        <div class="number">n°769</div><div class="date">10/07/2017</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-50">
+                                <div class="lettre">
+                                    <div class="lettre-content">
+                                        <div class="number">n°769</div><div class="date">10/07/2017</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-50">
+                                <div class="lettre">
+                                    <div class="lettre-content">
+                                        <div class="number">n°769</div><div class="date">10/07/2017</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+    <div class="webview">
+        <div class="webview-topbar"><span class="close-webview">Quitter X</span></div>
+        <div class="webview-content"></div>
+    </div>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
     <script type="text/javascript" src="js/my-app.js"></script>
