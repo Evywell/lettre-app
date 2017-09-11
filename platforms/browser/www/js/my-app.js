@@ -10,6 +10,8 @@ var webview = $$('.webview');
 // Add view
 var mainView = myApp.addView('.view-main');
 
+// Lettre courante
+var currentLetter = null;
 
 var createWebView = function (href) {
     //mainView.router.load({url: href, ignoreCache: true});
@@ -26,6 +28,16 @@ var createWebView = function (href) {
 $$('.close-webview').on('click', function () {
     webview.toggleClass('open');
 })
+
+var setSelectedLettre = function (idLettre) {
+    $$('.calendar-popover .lettre').each(function () {
+        if(this.dataset.lettreid == idLettre) {
+            this.classList.add('disabled');
+        } else {
+            this.classList.remove('disabled');
+        }
+    });
+}
 
 var feedArticles = function (id, titre, contenu, groupes, last_groupe, fichier, liens, fr_titre_cours) {
     var div = "";
@@ -56,9 +68,110 @@ var feedSommaire = function (groupe_nom, values) {
     div_sommaire.append('<div><span class="titre">' + groupe_nom + ' : </span><span>' + newTexte.join(' - ') + '</span></div>');
 }
 
+var div_agenda = $$('.agenda .agenda-dates');
+
+var feedAgenda = function (agenda) {
+    var div;
+    var date;
+    for (var i = 0; i < agenda.length; i++) {
+        date = agenda[i];
+        div = '<div class="agenda-date"><div class="agenda-date__date">' + date.fr_date_rdv + '</div><div' +
+            ' class="agenda-date__lieu">' + date.fr_lieu + '</div><div class="agenda-date__content">' + date.fr_texte + '</div></div>';
+        div_agenda.append(div);
+    }
+}
+
+var dateLoaded = [];
+var divCalendarDate = $$('#calendar-head-date');
+var divLettresCalendar = $$('.lettres');
+var listeMois = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+
+var parseMois = function (mois) {
+    if (mois.toString().length == 1) {
+        mois = "0" + mois;
+    }
+    return mois
+}
+
+// Calendrier ajout event sur les boutons
+var calendarPreviousMonth = function (e) {
+    e.preventDefault();
+    var currentDate = new Date(divLettresCalendar.dataset('date').date);
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    var mois = parseMois(currentDate.getMonth() + 1);
+    var annee = currentDate.getFullYear();
+    $$.get('http://localhost/schuman/lettre/infos/' + mois + '/' + annee, function (data){
+        feedCalendar(JSON.parse(data), currentDate);
+    });
+}
+
+var calendarNextMonth = function (e) {
+    e.preventDefault();
+    var currentDate = new Date(divLettresCalendar.dataset('date').date);
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    if (currentDate > new Date()) {
+        return;
+    }
+    var mois = parseMois(currentDate.getMonth() + 1);
+    var annee = currentDate.getFullYear();
+    $$.get('http://localhost/schuman/lettre/infos/' + mois + '/' + annee, function (data){
+        feedCalendar(JSON.parse(data), currentDate);
+    });
+}
+
+$$('#calendar-previous').on('click', calendarPreviousMonth);
+$$('#calendar-next').on('click', calendarNextMonth);
+
+var feedCalendar = function (lettres, d) {
+    divCalendarDate.text(listeMois[d.getMonth()] + " " + d.getFullYear());
+    if(d.length < 1) {
+        return;
+    }
+    var mois = (d.getMonth() + 1).toString();
+    mois = parseMois(mois);
+    divLettresCalendar.attr('data-date', d.getFullYear() + '-' + mois + '-01');
+    var div = '<div class="row">';
+    for (var i in lettres) {
+        var lettre = lettres[i];
+        div += '<div class="col-50 lettre" data-lettreid="' + lettre.id_lettre + '"><a data-id="' + lettre.numero + '" class="switch-lettre lettre' +
+            ' ' + ((lettre.id_lettre == currentLetter) ? 'disabled' : '') + '"><div' +
+            ' class="lettre-content"><div' +
+            ' class="number">n°' + lettre.numero + '</div><div class="date">' + lettre.date_publication + '</div></div></a></div>';
+    }
+    div += '</div>';
+    divLettresCalendar.html(div);
+    dateLoaded.push({date: d.getMonth() + "-" + d.getFullYear(), html: div});
+    // Evènement changer de lettre en cours
+    $$('.switch-lettre').on('click', function (e) {
+        e.preventDefault();
+        var id = this.dataset.id;
+        $$.get('http://localhost/schuman/lettre/' + id, function (data) {
+            feedLettre(JSON.parse(data));
+            setSelectedLettre(id);
+        });
+    })
+}
+
+var feedAuteurs = function (data) {
+    return data.map(function (d) {
+        return d.prenom + " " + d.nom;
+    }).join(', ');
+}
+
 var feedLettre = function (data) {
+    currentLetter = data.id;
     var articles = data.articles;
     var div_article = $$('.articles');
+    // Clear les divs
+    div_article.empty();
+    div_sommaire.empty();
+    div_agenda.empty();
+
+    // Titre et Auteurs
+    $$('.lettre-head .lettre-titre').text(data.lettre_titre);
+    var auteurs = feedAuteurs(data.auteurs);
+    $$('.lettre-head .lettre-soustitre').text("Auteurs : " + auteurs);
+    feedAgenda(data.agenda);
     var arts, div, groupe, art, key;
     var groupes = [];
     var sommaire = [];
@@ -104,17 +217,26 @@ var feedLettre = function (data) {
         el.scrollIntoView(true);
     });
 }
-
-/**
- * Récupération de la dernière lettre
- */
-$$.get('http://localhost/schuman/last', null, function (data) {
-    feedLettre(JSON.parse(data));
-})
-
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
     console.log("Device is ready!");
+    /**
+     * Récupération de la dernière lettre
+     */
+    $$.get('http://localhost/schuman/last/', null, function (data) {
+        feedLettre(JSON.parse(data));
+
+        /**
+         * Récuparation des lettres du mois pour le calendrier
+         */
+        var d = new Date();
+        var month = (d.getMonth() + 1).toString();
+        var year = d.getFullYear();
+        month = parseMois(month);
+        $$.get('http://localhost/schuman/lettre/infos/' + month + '/' + year, null, function (data) {
+            feedCalendar(JSON.parse(data), d);
+        })
+    })
 });
 
 /**
@@ -132,10 +254,7 @@ var bandeau = $$('.bandeau');
 $$('.open-lang').on('click', function () {
     var link = this;
     var top = bandeau.offset().top;
-
-    console.log( $$(document).scrollTop());
     $$('.views').scrollTop(0, 0, 300, function() {
-        console.log("sdfsdf");
     });
     myApp.popover('.popover-lang', link);
 })

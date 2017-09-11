@@ -22,7 +22,11 @@
 }
 
 .img-top {
-    height: 128px;
+    background: #4087c5;
+}
+
+.img-top img {
+    width: 100%;
 }
 
 .bandeau {
@@ -334,6 +338,7 @@
 }
 
 .calendar-popover {
+    background: #FFF;
     min-height: 300px;
 }
 
@@ -365,6 +370,7 @@
 }
 
 .calendar-popover .popover-content-calendar__content .lettres .lettre {
+    display: block;
     padding: 10px;
 }
 
