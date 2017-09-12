@@ -176,6 +176,8 @@ var feedLettre = function (data) {
     currentLetter = data.id;
     var articles = data.articles;
     var div_article = $$('.articles');
+    var div_date = $$('.bandeau-content__left');
+    div_date.text(data.date_publication);
     // Clear les divs
     div_article.empty();
     div_sommaire.empty();
