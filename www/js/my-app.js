@@ -84,7 +84,7 @@ var feedSommaire = function (groupe_nom, values) {
     for (var i = 0 ; i < values.length; i++) {
         newTexte.push('<a data-href="#' + values[i].id+ '">' + values[i].titre + '</a>');
     }
-    div_sommaire.append('<div><span class="titre">' + groupe_nom + ' : </span><span>' + newTexte.join(' - ') + '</span></div>');
+    div_sommaire.append('<span class="titre">' + groupe_nom + ' : </span><span>' + newTexte.join(' - ') + '</span>');
 }
 
 var div_agenda = $$('.agenda .agenda-dates');
