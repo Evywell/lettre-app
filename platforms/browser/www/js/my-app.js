@@ -163,6 +163,7 @@ var feedCalendar = function (lettres, d) {
             feedLettre(JSON.parse(data));
             setSelectedLettre(id);
         });
+        myApp.closeModal('.popover-calendar', true);
     })
 }
 
