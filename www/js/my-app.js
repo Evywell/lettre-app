@@ -5,11 +5,16 @@ var myApp = new Framework7();
 // If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Dom7;
 
+var debug = false;
+
+var baseUrl = debug ? 'http://localhost/applilettre/' : 'https://www.robert-schuman.eu/applilettre/';
+
 var webview = $$('.webview');
 
 // Add view
 var mainView = myApp.addView('.view-main');
 
+var modalCalendar;
 
 var scrollToTop = function () {
     var application = document.querySelector('.application');
@@ -114,7 +119,7 @@ var calendarPreviousMonth = function (e) {
     currentDate.setMonth(currentDate.getMonth() - 1);
     var mois = parseMois(currentDate.getMonth() + 1);
     var annee = currentDate.getFullYear();
-    $$.get('https://www.robert-schuman.eu/applilettre/lettre/infos/' + mois + '/' + annee, function (data){
+    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, function (data){
         feedCalendar(JSON.parse(data), currentDate);
     });
 }
@@ -128,7 +133,7 @@ var calendarNextMonth = function (e) {
     }
     var mois = parseMois(currentDate.getMonth() + 1);
     var annee = currentDate.getFullYear();
-    $$.get('https://www.robert-schuman.eu/applilettre/lettre/infos/' + mois + '/' + annee, function (data){
+    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, function (data){
         feedCalendar(JSON.parse(data), currentDate);
     });
 }
@@ -159,11 +164,11 @@ var feedCalendar = function (lettres, d) {
     $$('.switch-lettre').on('click', function (e) {
         e.preventDefault();
         var id = this.dataset.id;
-        $$.get('https://www.robert-schuman.eu/applilettre/lettre/' + id, function (data) {
+        $$.get(baseUrl + 'lettre/' + id, function (data) {
             feedLettre(JSON.parse(data));
             setSelectedLettre(id);
         });
-        myApp.closeModal('.popover-calendar', true);
+        myApp.closeModal(modalCalendar, true);
     })
 }
 
@@ -243,7 +248,7 @@ $$(document).on('deviceready', function() {
     /**
      * Récupération de la dernière lettre
      */
-    $$.get('https://www.robert-schuman.eu/applilettre/last/', null, function (data) {
+    $$.get(baseUrl + 'last/', null, function (data) {
         feedLettre(JSON.parse(data));
 
         /**
@@ -253,7 +258,7 @@ $$(document).on('deviceready', function() {
         var month = (d.getMonth() + 1).toString();
         var year = d.getFullYear();
         month = parseMois(month);
-        $$.get('https://www.robert-schuman.eu/applilettre/lettre/infos/' + month + '/' + year, null, function (data) {
+        $$.get(baseUrl + 'lettre/infos/' + month + '/' + year, null, function (data) {
             feedCalendar(JSON.parse(data), d);
         })
     })
@@ -280,7 +285,7 @@ $$('.open-lang').on('click', function () {
 $$('.open-calendar').on('click', function () {
     var link = this;
     scrollToTop();
-    myApp.popover('.popover-calendar', link);
+    modalCalendar = myApp.popover('.popover-calendar', link);
 })
 
 
