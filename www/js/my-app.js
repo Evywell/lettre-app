@@ -10,8 +10,22 @@ var webview = $$('.webview');
 // Add view
 var mainView = myApp.addView('.view-main');
 
+
+var scrollToTop = function () {
+    var application = document.querySelector('.application');
+    application.scrollTop = 0;
+}
+
 // Lettre courante
 var currentLetter = null;
+
+var launchWebView = function (href) {
+    var ref = cordova.InAppBrowser.open(encodeURI(href), "_blank", 'location=yes');
+    ref.addEventListener('loadstart', function (e) {
+        console.log(e);
+    });
+    ref.show();
+}
 
 var createWebView = function (href) {
     //mainView.router.load({url: href, ignoreCache: true});
@@ -167,10 +181,12 @@ var feedLettre = function (data) {
     div_sommaire.empty();
     div_agenda.empty();
 
+    $$('.bottom').html(data.footer.fr_footer);
+
     // Titre et Auteurs
     $$('.lettre-head .lettre-titre').text(data.lettre_titre);
     var auteurs = feedAuteurs(data.auteurs);
-    $$('.lettre-head .lettre-soustitre').text("Auteurs : " + auteurs);
+    $$('.lettre-head .lettre-soustitre').text("Auteur" + (data.auteurs.length > 1 ? 's' : '') + " : " + auteurs);
     feedAgenda(data.agenda);
     var arts, div, groupe, art, key;
     var groupes = [];
@@ -206,7 +222,8 @@ var feedLettre = function (data) {
         e.preventDefault();
         e.stopPropagation()
         var href = this.dataset.href;
-        createWebView(href);
+        launchWebView(href);
+        //createWebView(href);
     })
 
     $$('.sommaire-content span a').on('click', function () {
@@ -253,10 +270,14 @@ $$('.btn-sommaire').on('click', function () {
 var bandeau = $$('.bandeau');
 $$('.open-lang').on('click', function () {
     var link = this;
-    var top = bandeau.offset().top;
-    $$('.views').scrollTop(0, 0, 300, function() {
-    });
+    scrollToTop();
     myApp.popover('.popover-lang', link);
+})
+
+$$('.open-calendar').on('click', function () {
+    var link = this;
+    scrollToTop();
+    myApp.popover('.popover-calendar', link);
 })
 
 
