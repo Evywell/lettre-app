@@ -337,6 +337,8 @@ $$(document).on('deviceready', function() {
     });
 
     push.on('registration', function (data) {
+        console.log(data);
+        myApp.addNotification({title: "Registration ID", message: data.registrationId});
         deviceId = data.registrationId;
         registerLang(appLang);
     })
