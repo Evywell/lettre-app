@@ -5,7 +5,7 @@ var myApp = new Framework7();
 // If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Dom7;
 
-var debug = false;
+var debug = true;
 
 var baseUrl = debug ? 'http://localhost/applilettre/' : 'https://www.robert-schuman.eu/applilettre/';
 
@@ -69,7 +69,7 @@ btnsLang.each(function () {
 });
 
 var registerLang = function (lang) {
-    $$.get(baseUrl + 'register/' + lang + '/' + deviceId, function (data) {
+    $$.get(baseUrl + 'register/' + lang + '/' + deviceId, null, function (data) {
         console.log("Réponse du serveur pour l'enregistrement de la langue: ", data);
     });
 }
@@ -85,7 +85,7 @@ var eventBtnLang = function (e) {
     });
     this.classList.add('disabled');
 
-    $$.get(baseUrl + 'last/' + appLang, function (data) {
+    $$.get(baseUrl + 'last/' + appLang, null, function (data) {
         feedLettre(JSON.parse(data));
     });
     myApp.closeModal(modalLang, true);
@@ -186,7 +186,7 @@ var calendarPreviousMonth = function (e) {
     currentDate.setMonth(currentDate.getMonth() - 1);
     var mois = parseMois(currentDate.getMonth() + 1);
     var annee = currentDate.getFullYear();
-    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, function (data){
+    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, null, function (data){
         feedCalendar(JSON.parse(data), currentDate);
     });
 }
@@ -200,7 +200,7 @@ var calendarNextMonth = function (e) {
     }
     var mois = parseMois(currentDate.getMonth() + 1);
     var annee = currentDate.getFullYear();
-    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, function (data){
+    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, null, function (data){
         feedCalendar(JSON.parse(data), currentDate);
     });
 }
@@ -231,7 +231,7 @@ var feedCalendar = function (lettres, d) {
     $$('.switch-lettre').on('click', function (e) {
         e.preventDefault();
         var id = this.dataset.id;
-        $$.get(baseUrl + 'lettre/' + id + '/' + appLang, function (data) {
+        $$.get(baseUrl + 'lettre/' + id + '/' + appLang, null, function (data) {
             feedLettre(JSON.parse(data));
             setSelectedLettre(id);
         });
@@ -319,6 +319,7 @@ var feedLettre = function (data) {
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
     console.log("Device is ready!");
+    /**
     var push = PushNotification.init({
         android: {
             senderId: "222555888"
@@ -346,6 +347,7 @@ $$(document).on('deviceready', function() {
     push.on('notification', function (data) {
         console.log(data);
     });
+     **/
     /**
      * Récupération de la dernière lettre
      */
