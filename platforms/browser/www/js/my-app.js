@@ -321,6 +321,7 @@ $$(document).on('deviceready', function() {
     console.log("Device is ready!");
     var push = PushNotification.init({
         android: {
+            senderId: "222555888"
             // senderId:
             // "f3KTe41toM8:APA91bF23AjRrose9lPvhqzeaNqOVW8GclBVUAdIVmfaM0ffyo2CeGI6jLaAEQx3ieZunFkP7KQi4tWubRz2j_ZA9OnEVJAkzJyEiUC_UmdAAWR2IHThdiVgR-bU5-unx4yvEEUshgFu"
         },
