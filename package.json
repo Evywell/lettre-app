@@ -10,13 +10,15 @@
             "cordova-plugin-console": {},
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
-            "cordova-plugin-inappbrowser": {}
+            "cordova-plugin-inappbrowser": {},
+            "phonegap-plugin-push": {}
         }
     },
     "dependencies": {
         "cordova-plugin-console": "~1.0.1",
         "cordova-plugin-inappbrowser": "^1.7.1",
         "cordova-plugin-statusbar": "~1.0.1",
-        "cordova-plugin-whitelist": "~1.2.0"
+        "cordova-plugin-whitelist": "~1.2.0",
+        "phonegap-plugin-push": "^2.0.0"
     }
 }

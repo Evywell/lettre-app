@@ -9,12 +9,34 @@ var debug = false;
 
 var baseUrl = debug ? 'http://localhost/applilettre/' : 'https://www.robert-schuman.eu/applilettre/';
 
+var deviceId;
+var appLang = window.localStorage.lang || 'fr';
+console.log('Device language', appLang);
+
+var noLanguageLetter = {fr: "Aucune lettre", en: "No letter", es: "No letter", de: "No letter", pl: "No letter"}
+var translations = {
+    auteur: {fr: "Auteur", en: "Author", es: "Autor", de: "Autor", pl: "Autor"},
+    auteurs: {fr: "Auteurs", en: "Authors", es: "Autores", de: "Autoren", pl: "Autorzy"},
+    sommaire: {fr: "Sommaire", en: "Contents", es: "Sumario", de: "Übersicht", pl: "treszczenie"},
+    choix_lettre: {fr: "Choix de la Lettre", en: "Choose the Letter", es: "Elección de la carta", de: "Choose the Letter", pl: "Choose the Letter"},
+    versions_disponibles: {fr: "Versions disponibles", en: "Available versions", es: "Versions disponibles", de: "Available versions", pl: "Available versions"}
+};
+
+var updateMenu = function () {
+    $$('.btn-sommaire').text(translations.sommaire[appLang]);
+    $$('.popover-content-calendar__head').text(translations.choix_lettre[appLang]);
+    $$('.popover-content-lang__head').text(translations.versions_disponibles[appLang]);
+}
+
+updateMenu();
+
 var webview = $$('.webview');
 
 // Add view
 var mainView = myApp.addView('.view-main');
 
 var modalCalendar;
+var modalLang;
 
 var scrollToTop = function () {
     var application = document.querySelector('.application');
@@ -27,10 +49,51 @@ var currentLetter = null;
 var launchWebView = function (href) {
     var ref = cordova.InAppBrowser.open(encodeURI(href), "_blank", 'location=yes');
     ref.addEventListener('loadstart', function (e) {
-        console.log(e);
     });
     ref.show();
 }
+
+// Gestion des langues
+
+var changeLangue = function (langue) {
+    appLang = langue;
+    window.localStorage.setItem('lang', appLang);
+}
+
+var btnsLang = $$('.btn-lang-popover');
+
+btnsLang.each(function () {
+    if(this.dataset.lang == appLang) {
+        this.classList.add('disabled');
+    }
+});
+
+var registerLang = function (lang) {
+    $$.get(baseUrl + 'register/' + lang + '/' + deviceId, function (data) {
+        console.log("Réponse du serveur pour l'enregistrement de la langue: ", data);
+    });
+}
+
+var eventBtnLang = function (e) {
+    e.preventDefault();
+    var lang = this.dataset.lang;
+    changeLangue(lang);
+    updateMenu();
+    registerLang(lang);
+    btnsLang.each(function () {
+        this.classList.remove('disabled');
+    });
+    this.classList.add('disabled');
+
+    $$.get(baseUrl + 'last/' + appLang, function (data) {
+        feedLettre(JSON.parse(data));
+    });
+    myApp.closeModal(modalLang, true);
+}
+
+btnsLang.each(function () {
+    this.addEventListener('click', eventBtnLang);
+});
 
 var createWebView = function (href) {
     //mainView.router.load({url: href, ignoreCache: true});
@@ -68,12 +131,15 @@ var feedArticles = function (id, titre, contenu, groupes, last_groupe, fichier, 
     }
     div += '<a class="article" id="' + id + '" data-id="' + id + '"><div class="article-titre">' + titre + '</div>';
     div += '<div class="article-contenu hidden">' + contenu;
-    div += '<div class="article-btns"><button class="article-btn" data-href="' + liens[0].fr_lien + '">lire la' +
+    div += '<div class="article-btns"><button class="article-btn" data-href="' + liens[0][appLang + '_lien'] + '">lire la' +
         ' suite</button>';
     if (liens.length > 1) {
-        div += '<button class="article-btn" data-href="' + liens[1].fr_lien + '">autre lien</button>'
+        div += '<button class="article-btn" data-href="' + liens[1][appLang + '_lien'] + '">autre lien</button>'
     }
     div += '</div></div></div></a>';
+    if(titre == null) {
+        div = "";
+    }
     return div;
 }
 
@@ -94,8 +160,9 @@ var feedAgenda = function (agenda) {
     var date;
     for (var i = 0; i < agenda.length; i++) {
         date = agenda[i];
-        div = '<div class="agenda-date"><div class="agenda-date__date">' + date.fr_date_rdv + '</div><div' +
-            ' class="agenda-date__lieu">' + date.fr_lieu + '</div><div class="agenda-date__content">' + date.fr_texte + '</div></div>';
+        div = '<div class="agenda-date"><div class="agenda-date__date">' + date[appLang + '_date_rdv'] + '</div><div' +
+            ' class="agenda-date__lieu">' + date[appLang + '_lieu'] + '</div>' +
+            '<div class="agenda-date__content">' + date[appLang + '_texte'] + '</div></div>';
         div_agenda.append(div);
     }
 }
@@ -164,7 +231,7 @@ var feedCalendar = function (lettres, d) {
     $$('.switch-lettre').on('click', function (e) {
         e.preventDefault();
         var id = this.dataset.id;
-        $$.get(baseUrl + 'lettre/' + id, function (data) {
+        $$.get(baseUrl + 'lettre/' + id + '/' + appLang, function (data) {
             feedLettre(JSON.parse(data));
             setSelectedLettre(id);
         });
@@ -180,21 +247,28 @@ var feedAuteurs = function (data) {
 
 var feedLettre = function (data) {
     currentLetter = data.id;
-    var articles = data.articles;
     var div_article = $$('.articles');
     var div_date = $$('.bandeau-content__left');
+    if(data.error != undefined && data.error == 'lang') {
+        div_article.text(noLanguageLetter[appLang]);
+        return;
+    }
+    var articles = data.articles;
     div_date.text(data.date_publication);
     // Clear les divs
     div_article.empty();
     div_sommaire.empty();
     div_agenda.empty();
 
-    $$('.bottom').html(data.footer.fr_footer);
+    $$('.bottom').html(data.footer[appLang + '_footer']);
 
     // Titre et Auteurs
-    $$('.lettre-head .lettre-titre').text(data.lettre_titre);
+    var titre = data.lettre_titre.find(function (el) {
+       return el.langue == appLang;
+    }).titre;
+    $$('.lettre-head .lettre-titre').text(titre);
     var auteurs = feedAuteurs(data.auteurs);
-    $$('.lettre-head .lettre-soustitre').text("Auteur" + (data.auteurs.length > 1 ? 's' : '') + " : " + auteurs);
+    $$('.lettre-head .lettre-soustitre').text((data.auteurs.length > 1 ? translations.auteurs[appLang] : translations.auteur[appLang]) + " : " + auteurs);
     feedAgenda(data.agenda);
     var arts, div, groupe, art, key;
     var groupes = [];
@@ -205,8 +279,8 @@ var feedLettre = function (data) {
         for (var i = 0; i < arts.length; i++) {
             art = arts[i];
             groupe = prop;
-            div = feedArticles(art.id, art.fr_titre, art.fr_texte, groupes, groupe, art.fichier, art.liens, art.fr_titre_cours);
-            sommaire[groupe].push({ titre: art.fr_titre_cours, id: art.id});
+            div = feedArticles(art.id, art[appLang + '_titre'], art[appLang + '_texte'], groupes, groupe, art.fichier, art.liens, art[appLang + '_titre_cours']);
+            sommaire[groupe].push({ titre: art[appLang + '_titre_cours'], id: art.id});
             groupes.push(groupe);
             div_article.append(div);
         }
@@ -245,10 +319,34 @@ var feedLettre = function (data) {
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
     console.log("Device is ready!");
+    var push = PushNotification.init({
+        android: {
+            // senderId:
+            // "f3KTe41toM8:APA91bF23AjRrose9lPvhqzeaNqOVW8GclBVUAdIVmfaM0ffyo2CeGI6jLaAEQx3ieZunFkP7KQi4tWubRz2j_ZA9OnEVJAkzJyEiUC_UmdAAWR2IHThdiVgR-bU5-unx4yvEEUshgFu"
+        },
+        browser: {
+            pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+        },
+        ios: {
+            alert: "true",
+            badge: true,
+            sound: 'false'
+        },
+        windows: {}
+    });
+
+    push.on('registration', function (data) {
+        deviceId = data.registrationId;
+        registerLang(appLang);
+    })
+
+    push.on('notification', function (data) {
+        console.log(data);
+    });
     /**
      * Récupération de la dernière lettre
      */
-    $$.get(baseUrl + 'last/', null, function (data) {
+    $$.get(baseUrl + 'last/' + appLang, null, function (data) {
         feedLettre(JSON.parse(data));
 
         /**
@@ -279,7 +377,7 @@ var bandeau = $$('.bandeau');
 $$('.open-lang').on('click', function () {
     var link = this;
     scrollToTop();
-    myApp.popover('.popover-lang', link);
+    modalLang = myApp.popover('.popover-lang', link);
 })
 
 $$('.open-calendar').on('click', function () {
@@ -313,3 +411,4 @@ $$(document).on('pageInit', '.page[data-page="about"]', function (e) {
     // Following code will be executed for page with data-page attribute equal to "about"
     myApp.alert('Here comes About page');
 })
+
