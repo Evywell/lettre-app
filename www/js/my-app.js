@@ -179,6 +179,31 @@ var parseMois = function (mois) {
     return mois
 }
 
+
+var calendarMonth = function (type, mois, annee, currentDate) {
+    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, null, function (data){
+        var data = JSON.parse(data);
+        if (data.length == 0) {
+            if (type == 'previous') {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                mois = parseMois(currentDate.getMonth() + 1);
+                annee = currentDate.getFullYear();
+                calendarMonth('previous', mois, annee, currentDate);
+            } else {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                if (currentDate > new Date()) {
+                    return;
+                }
+                mois = parseMois(currentDate.getMonth() + 1);
+                annee = currentDate.getFullYear();
+                calendarMonth('previous', mois, annee, currentDate);
+            }
+            return;
+        }
+        feedCalendar(data, currentDate);
+    });
+}
+
 // Calendrier ajout event sur les boutons
 var calendarPreviousMonth = function (e) {
     e.preventDefault();
@@ -186,9 +211,7 @@ var calendarPreviousMonth = function (e) {
     currentDate.setMonth(currentDate.getMonth() - 1);
     var mois = parseMois(currentDate.getMonth() + 1);
     var annee = currentDate.getFullYear();
-    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, null, function (data){
-        feedCalendar(JSON.parse(data), currentDate);
-    });
+    calendarMonth('previous', mois, annee, currentDate);
 }
 
 var calendarNextMonth = function (e) {
@@ -200,10 +223,9 @@ var calendarNextMonth = function (e) {
     }
     var mois = parseMois(currentDate.getMonth() + 1);
     var annee = currentDate.getFullYear();
-    $$.get(baseUrl + 'lettre/infos/' + mois + '/' + annee, null, function (data){
-        feedCalendar(JSON.parse(data), currentDate);
-    });
+    calendarMonth('next', mois, annee, currentDate);
 }
+
 
 $$('#calendar-previous').on('click', calendarPreviousMonth);
 $$('#calendar-next').on('click', calendarNextMonth);
